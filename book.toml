@@ -1,0 +1,20 @@
+[book]
+authors = ["Your Name"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Kryon Documentation"
+description = "Build efficient, cross-platform user interfaces"
+
+[preprocessor.links]
+
+[output.html]
+additional-css = ["assets/custom.css"]
+git-repository-url = "https://github.com/kryonlabs/kryon-docs"
+edit-url-template = "https://github.com/kryonlabs/kryon-docs/edit/main/src/{path}"
+
+[output.html.search]
+enable = true
+
+[output.html.print]
+enable = true

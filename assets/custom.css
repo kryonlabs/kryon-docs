@@ -1,0 +1,10 @@
+:root {
+    --primary-color: #007bff;
+  }
+  
+  .kry-code {
+    background: #f8f9fa;
+    border-left: 3px solid var(--primary-color);
+    padding-left: 1rem;
+  }
+  
