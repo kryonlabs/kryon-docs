@@ -1,11 +1,23 @@
 #!/bin/bash
 
-# Install Rust and mdBook
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-source $HOME/.cargo/env
+set -e  # Stop on first error
 
-# Install mdBook (latest or pin a version like --version 0.4.37)
-cargo install mdbook
+# Install Rust (if not already installed)
+if ! command -v cargo &> /dev/null; then
+  echo "Installing Rust..."
+  curl https://sh.rustup.rs -sSf | sh -s -- -y
+  source $HOME/.cargo/env
+else
+  echo "Rust is already installed."
+fi
 
-# Build the book
+# Add Cargo to PATH (important for Netlify)
+export PATH="$HOME/.cargo/bin:$PATH"
+
+# Install mdBook
+echo "Installing mdBook..."
+cargo install mdbook --version 0.4.37
+
+# Build the documentation
+echo "Building the book..."
 mdbook build
