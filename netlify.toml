@@ -1,0 +1,8 @@
+[build]
+  command = "./netlify-build.sh"
+  publish = "book"
+
+[build.environment]
+  RUSTUP_HOME = "/opt/buildhome/.rustup"
+  CARGO_HOME = "/opt/buildhome/.cargo"
+  PATH = "/opt/buildhome/.cargo/bin:/opt/buildhome/.rustup/bin:$PATH"
