@@ -1,9 +1,9 @@
-name: Deploy mdBook to GitHub Pages
+name: Deploy mdBook to Netlify
 
 on:
   push:
     branches:
-      - main  # change this if your default branch is not main
+      - main
 
 jobs:
   build:
@@ -26,9 +26,11 @@ jobs:
       - name: Build the book
         run: mdbook build
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./book
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
 
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        run: |
+          netlify deploy --dir=book --prod --auth $NETLIFY_AUTH_TOKEN
