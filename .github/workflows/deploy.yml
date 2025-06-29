@@ -1,36 +1,36 @@
+# .github/workflows/deploy.yml
 name: Deploy mdBook to Netlify
 
 on:
   push:
     branches:
-      - main
+      - main # Or whatever your default branch is
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout source
-        uses: actions/checkout@v3
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          override: true
-
+      # This action is much cleaner than installing the Rust toolchain manually
       - name: Install mdBook
-        run: cargo install mdbook --version 0.4.37
+        uses: peaceiris/actions-mdbook@v1
+        with:
+          mdbook-version: '0.4.37' # Pin the version for consistency
 
       - name: Build the book
         run: mdbook build
 
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-
       - name: Deploy to Netlify
+        # Use the official Netlify Deploy Action for a more stable experience
+        uses: nwtgck/actions-netlify@v2.1
+        with:
+          publish-dir: './book'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions: ${{ github.event.head_commit.message }}"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: |
-          netlify deploy --dir=book --prod --auth $NETLIFY_AUTH_TOKEN
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
