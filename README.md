@@ -64,3 +64,4 @@ This repository uses GitHub Actions to automatically build and deploy the docume
 - `book.toml` - mdBook configuration
 - `assets/` - Custom CSS and other assets
 - `book/` - Generated static site (auto-generated)
+
