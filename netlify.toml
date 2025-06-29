@@ -1,0 +1,6 @@
+[build]
+  command = "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y && . $HOME/.cargo/env && cargo install mdbook --version 0.4.37 && mdbook build"
+  publish = "book"
+
+[build.environment]
+  RUST_VERSION = "1.72.0"
