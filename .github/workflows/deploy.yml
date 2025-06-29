@@ -1,36 +1,51 @@
-# .github/workflows/deploy.yml
+# This file defines the GitHub Actions workflow to build and deploy an mdBook site.
+# It should be placed in the .github/workflows/ directory of your repository.
+
 name: Deploy mdBook to Netlify
 
+# This workflow runs on any push to the 'main' branch.
 on:
   push:
     branches:
-      - main # Or whatever your default branch is
+      - main
 
 jobs:
+  # The 'deploy' job handles the entire build and deployment process.
   deploy:
     runs-on: ubuntu-latest
+    
     steps:
+      # Step 1: Check out the source code from your repository.
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # This action is much cleaner than installing the Rust toolchain manually
+      # Step 2: Install mdBook. This action is a convenient wrapper that
+      # handles installing the Rust toolchain and mdBook itself.
       - name: Install mdBook
         uses: peaceiris/actions-mdbook@v1
         with:
-          mdbook-version: '0.4.37' # Pin the version for consistency
+          # You can pin the mdBook version for consistent builds.
+          mdbook-version: '0.4.37' 
 
+      # Step 3: Run the 'mdbook build' command.
+      # This generates the static HTML files for your book.
+      # By default, the output is placed in a directory named 'book'.
       - name: Build the book
         run: mdbook build
 
+      # Step 4: Deploy the generated site to Netlify.
+      # This action handles the communication with Netlify's API.
       - name: Deploy to Netlify
-        # Use the official Netlify Deploy Action for a more stable experience
         uses: nwtgck/actions-netlify@v2.1
         with:
+          # The directory that contains the built site.
           publish-dir: './book'
+          # Tells Netlify this is a production deploy because it's from the main branch.
           production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          # A descriptive message for the Netlify deploy log.
           deploy-message: "Deploy from GitHub Actions: ${{ github.event.head_commit.message }}"
         env:
+          # These secrets MUST be configured in your GitHub repository's settings.
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         timeout-minutes: 1
