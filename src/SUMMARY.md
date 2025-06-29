@@ -8,6 +8,14 @@
 - [Hello World](./getting-started/hello-world.md)
 - [Core Concepts](./getting-started/core-concepts.md)
 
+
+# Specifications
+
+- [Complete Specifications](./specifications/index.md)
+  - [Kryon Overview](./specifications/kryon-overview.md)
+  - [Implementation Guide](./specifications/implementation-guide.md)
+  - [Complete Reference](./specifications/complete-reference.md)
+
 # Reference
 
 - [KRY Language](./reference/kry/index.md)
