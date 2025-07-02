@@ -8,8 +8,8 @@ Currently, Kryon is available by building from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/kryon-lang/kryon.git
-cd kryon
+git clone https://github.com/kyronlabs/kryon-compiler.git
+cd kryon-compiler
 
 # Build with Rust (requires Rust 1.70+)
 cargo build --release
