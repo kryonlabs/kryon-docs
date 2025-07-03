@@ -1,106 +1,71 @@
-# Installation & Setup
+# Installation
 
-Get up and running with Kryon in minutes. This guide covers installing the Kryon compiler (`kryc`) and setting up your development environment.
+Get up and running with Kryon in minutes.
 
-## Install from Source
+## Prerequisites
 
-Currently, Kryon is available by building from source:
+- [Rust](https://rustup.rs/) 1.70 or newer
+
+## Install Compiler
+
+Build the Kryon compiler from source:
 
 ```bash
 # Clone the repository
 git clone https://github.com/kyronlabs/kryon-compiler.git
 cd kryon-compiler
 
-# Build with Rust (requires Rust 1.70+)
+# Build with Rust
 cargo build --release
 
-# Install globally
+# Install globally (optional)
 cargo install --path .
+```
 
-# Or add to PATH manually
-export PATH="$PWD/target/release:$PATH"
+## Install Renderer
+
+Build the Kryon renderer with your preferred backend:
+
+```bash
+# Clone the renderer
+git clone https://github.com/kryonlabs/kryon-renderer.git
+cd kryon-renderer
+
+# Build all backends
+cargo build --workspace --release
+
+# Or build specific backend
+cargo build --no-default-features --features wgpu --release     # Desktop
+cargo build --no-default-features --features ratatui --release  # Terminal  
+cargo build --no-default-features --features raylib --release   # Graphics
 ```
 
 ## Verify Installation
 
-Check that the compiler is installed correctly:
+Check that tools are working:
 
 ```bash
-kryc --version
-# Should output: kryc 1.2.0
+# Test compiler
+cd kryon-compiler
+cargo run -- --help
+
+# Test renderer
+cd kryon-renderer  
+cargo run --bin kryon-renderer-wgpu -- --help
 ```
 
-## Development Environment
+## Create Your First App
 
-### Text Editor Support
-
-**Visual Studio Code** (Recommended)
-- Install the [Kryon Extension](https://marketplace.visualstudio.com/items?itemName=kryon-lang.kryon)
-- Provides syntax highlighting, IntelliSense, and live preview
-
-```bash
-code --install-extension kryon-lang.kryon
-```
-
-**Vim/Neovim**
-```bash
-# Install via vim-plug
-Plug 'kryon-lang/vim-kryon'
-```
-
-**Sublime Text**
-- Package Control: Install "Kryon Language Support"
-
-**Other Editors**
-- Generic syntax highlighting available for most editors
-- See [Editor Support](../tools/editors/) for complete list
-
-### Project Structure
-
-Create a new Kryon project:
+Create a simple app to test setup:
 
 ```bash
 mkdir my-kryon-app
 cd my-kryon-app
-
-# Create main source file
-touch main.kry
-
-# Create assets directory
-mkdir assets
-
-# Optional: Initialize git
-git init
-echo "*.krb" >> .gitignore
-echo "build/" >> .gitignore
 ```
 
-Recommended project structure:
-
-```
-my-kryon-app/
-├── main.kry              # Main application file
-├── styles/
-│   ├── theme.kry         # Theme and variables
-│   └── components.kry    # Reusable styles
-├── components/
-│   ├── button.kry        # Custom components
-│   └── card.kry
-├── assets/
-│   ├── images/
-│   └── fonts/
-├── scripts/
-│   └── app.lua           # Application logic
-└── build/                # Compiled output
-    └── app.krb
-```
-
-## Compile Your First App
-
-Create a simple app to test your setup:
+Create `main.kry`:
 
 ```kry
-# main.kry
 App {
     window_title: "My First Kryon App"
     window_width: 400
@@ -113,149 +78,56 @@ App {
         Text {
             text: "Hello, Kryon!"
             font_size: 24
-            font_weight: bold
-            text_color: "#333333FF"
-        }
-        
-        Button {
-            text: "Click Me"
-            background_color: "#007BFFFF"
-            text_color: "#FFFFFFFF"
-            padding: 12
-            border_radius: 6
-            margin_top: 16
         }
     }
 }
 ```
 
-Compile it:
+Compile and run:
 
 ```bash
-kryc main.kry -o build/app.krb
+# Compile
+../kryon-compiler/target/release/kryc main.kry -o app.krb
+
+# Run with desktop renderer
+../kryon-renderer/target/release/kryon-renderer-wgpu app.krb
+
+# Or run with terminal renderer
+../kryon-renderer/target/release/kryon-renderer-ratatui app.krb
 ```
 
-You should see output like:
+## Development Commands
 
-```
-Compiling main.kry...
-✓ Parsed 4 elements
-✓ Resolved 12 properties  
-✓ Generated 847 bytes
-→ build/app.krb
-```
-
-## Runtime Options
-
-To view your compiled app, you need a Kryon runtime:
-
-### Desktop Runtime
+Common commands during development:
 
 ```bash
-# Build desktop runtime from kryon repo
-cd kryon/runtimes/desktop
-cargo build --release
+# Compiler
+cargo run -- input.kry -o output.krb         # Basic compilation
+cargo run -- compile input.kry --watch       # Watch mode
+cargo test                                   # Run tests
 
-# Run your app
-./target/release/kryon-desktop ../../my-kryon-app/build/app.krb
-```
-
-### Web Runtime
-
-```bash
-# Build web runtime from kryon repo
-cd kryon/runtimes/web
-npm install
-npm run build
-
-# Serve your app
-npm run serve ../../my-kryon-app/build/app.krb
-# Open http://localhost:3000
-```
-
-### Mobile Development
-
-For mobile development, see the platform-specific guides:
-- [iOS Development](../runtime/platforms/ios.md)
-- [Android Development](../runtime/platforms/android.md)
-
-## Compiler Options
-
-Common `kryc` options:
-
-```bash
-# Basic compilation
-kryc input.kry -o output.krb
-
-# Development mode (larger file, better debugging)
-kryc input.kry --dev -o output.krb
-
-# Production mode (maximum optimization)
-kryc input.kry --release -o output.krb
-
-# Include additional files
-kryc main.kry -I styles/ -I components/ -o app.krb
-
-# Watch mode (recompile on changes)
-kryc main.kry --watch -o app.krb
-
-# Verbose output
-kryc input.kry --verbose -o output.krb
-
-# Generate source maps
-kryc input.kry --sourcemap -o output.krb
+# Renderer  
+cargo test -p kryon-ratatui                  # Run snapshot tests
+cargo insta review                           # Review test changes
+cargo build --workspace                      # Build all backends
 ```
 
 ## Troubleshooting
 
-### Build Issues
+**Build fails**: Ensure Rust 1.70+ is installed:
+```bash
+rustc --version
+rustup update
+```
 
-If the build fails:
+**Command not found**: Add cargo bin to PATH:
+```bash
+echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
 
-1. **Check Rust Version**: Ensure you have Rust 1.70 or newer
-   ```bash
-   rustc --version
-   rustup update
-   ```
-
-2. **Dependencies**: Make sure all dependencies are available
-   ```bash
-   cargo clean
-   cargo build --release
-   ```
-
-### Command Not Found
-
-If `kryc` is not found after installation:
-
-1. **Check Installation**: Verify cargo install succeeded
-2. **PATH Setup**: Add cargo bin to PATH
-   ```bash
-   echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc
-   source ~/.bashrc
-   ```
-
-### Compilation Errors
-
-Common issues:
-
-- **Syntax Error**: Check your `.kry` file syntax
-- **Missing Files**: Ensure all `@include` files exist
-- **Property Conflicts**: Check for conflicting property definitions
-
-### Performance Issues
-
-- Use `--release` flag for production builds
-- Minimize the number of included files
-- Consider breaking large files into smaller components
+**Runtime errors**: Check the error output and ensure your KRB file was compiled successfully.
 
 ## What's Next?
 
-Now that you have Kryon installed, let's build your first real app:
-
 **[→ Create Your First App](hello-world.md)**
-
-Or explore more advanced topics:
-- [Core Concepts](core-concepts.md) - Elements, properties, and layout
-- [Language Reference](../reference/kry/index.md) - Complete syntax guide
-- [Examples](../examples/calculator.md) - Working projects to learn from

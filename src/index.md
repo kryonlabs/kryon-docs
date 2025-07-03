@@ -1,44 +1,19 @@
 # Kryon Documentation
 
-**Build efficient, cross-platform user interfaces with a compact binary format**
+**Build cross-platform user interfaces with a compact binary format**
 
-Welcome to Kryon, a universal UI language designed for performance, simplicity, and portability. Whether you're building apps for embedded systems, desktop applications, or modern web interfaces, Kryon lets you write once and deploy everywhere.
+Kryon is a UI framework that compiles declarative `.kry` files into optimized `.krb` binaries for fast, cross-platform rendering.
 
 ## What is Kryon?
 
 Kryon consists of two main parts:
 
-- **KRY Source Language** (`.kry`) - A clean, human-readable language for describing user interfaces
-- **KRB Binary Format** (`.krb`) - An ultra-compact binary representation optimized for fast parsing and minimal memory usage
+- **KRY Language** (`.kry`) - Declarative UI language for describing interfaces
+- **KRB Binary** (`.krb`) - Compact binary format optimized for fast parsing
 
-You write your UI in `.kry` files, compile them with the Kryon compiler (`kryc`), and deploy the resulting `.krb` files to any platform with a Kryon runtime.
-
-## Why Choose Kryon?
-
-### ⚡ **Performance First**
-- Binary format designed for lightning-fast parsing
-- Minimal memory footprint (works on 8-bit systems)
-- No runtime interpretation overhead
-
-### 🌍 **Universal Compatibility**
-- Runs on everything from microcontrollers to modern desktops
-- Platform-independent binary format
-- Consistent behavior across all runtimes
-
-### 🎨 **Modern UI Features**
-- CSS-like styling with inheritance
-- Reusable components with `Define` blocks
-- Interactive states (hover, focus, active)
-- Embedded scripting (Lua, JavaScript, Python, Wren)
-
-### 🛠️ **Developer Friendly**
-- Clean, readable syntax
-- Powerful theming and variable system
-- Excellent tooling and error messages
+You write UI in `.kry` files, compile with `kryc`, and render with various backends.
 
 ## Quick Example
-
-Here's a simple Kryon app:
 
 ```kry
 App {
@@ -48,13 +23,11 @@ App {
     
     Container {
         layout: column center
-        gap: 16
-        padding: 24
+        padding: 20
         
         Text {
             text: "Welcome to Kryon!"
             font_size: 24
-            font_weight: bold
         }
         
         Button {
@@ -63,55 +36,67 @@ App {
             text_color: "#FFFFFFFF"
             padding: 12
             border_radius: 6
-            onClick: "handleClick"
         }
     }
 }
 ```
 
-This compiles to a tiny binary file that any Kryon runtime can display instantly.
+## Current Implementation
+
+Kryon is in active development with these working components:
+
+### Compiler (`kryon-compiler`)
+- Rust-based compiler for KRY→KRB transformation
+- Basic language parsing and binary generation
+- Repository: [github.com/kryonlabs/kryon-compiler](https://github.com/kryonlabs/kryon-compiler)
+
+### Renderer (`kryon-renderer`) 
+- Multiple rendering backends:
+  - **WGPU**: GPU-accelerated desktop rendering
+  - **Ratatui**: Terminal-based UI for CLI applications  
+  - **Raylib**: Simple 2D/3D graphics
+- Repository: [github.com/kryonlabs/kryon-renderer](https://github.com/kryonlabs/kryon-renderer)
 
 ## How It Works
 
 ```
 ┌─────────────┐    ┌──────────┐    ┌─────────────┐
 │   app.kry   │───▶│   kryc   │───▶│   app.krb   │
-│ (Human Code)│    │(Compiler)│    │ (Binary UI) │
+│ (Source UI) │    │(Compiler)│    │ (Binary UI) │
 └─────────────┘    └──────────┘    └─────────────┘
                                            │
                                            ▼
                                    ┌─────────────┐
-                                   │   Runtime   │
-                                   │  (Any OS)   │
+                                   │   Renderer  │
+                                   │ (WGPU/etc.) │
                                    └─────────────┘
 ```
 
-1. **Write** your UI in clean, readable `.kry` files
-2. **Compile** with `kryc` to generate optimized `.krb` binaries
-3. **Deploy** the tiny binary files to any platform
-4. **Run** with a Kryon runtime on the target system
+## Platform Support
 
-## File Size Comparison
+Current renderer backends support:
 
-A typical mobile app UI that might be 50KB as a web page becomes just 2-5KB as a Kryon binary - a 90%+ size reduction while maintaining full functionality.
+- **Desktop**: Windows, macOS, Linux (via WGPU)
+- **Terminal**: Any terminal that supports Ratatui
+- **Graphics**: Cross-platform via Raylib
 
-## What's Next?
+## Get Started
 
-Ready to build your first Kryon app? Start with our step-by-step tutorial:
+Ready to try Kryon? Start with installation:
 
-**[→ Get Started with Installation](getting-started/installation.md)**
+**[→ Installation Guide](getting-started/installation.md)**
 
 Or explore the documentation:
 
-- **[Core Concepts](getting-started/core-concepts.md)** - Understand elements, properties, and layout
-- **[Language Reference](reference/kry/index.md)** - Complete KRY syntax guide  
-- **[Styling Guide](styling/basics.md)** - Learn the CSS-like styling system
-- **[Examples](examples/calculator.md)** - See complete, working projects
+- **[Hello World](getting-started/hello-world.md)** - Build your first app
+- **[Core Concepts](getting-started/core-concepts.md)** - Understand the basics
+- **[Language Reference](reference/kry/syntax.md)** - Complete syntax guide
+- **[Examples](examples/calculator.md)** - Working projects
 
-## Community
+## License
 
-Kryon is actively developed and welcomes contributions. Whether you're building apps, creating runtimes for new platforms, or improving the documentation, we'd love your help.
+Kryon is licensed under [0BSD](https://opensource.org/licenses/0BSD) - public domain equivalent.
 
 ---
 
-*Kryon v1.2 | Last updated: June 2025*
+**Website**: [kryonlabs.com](https://kryonlabs.com) | **Documentation**: [docs.kryonlabs.com](https://docs.kryonlabs.com)
