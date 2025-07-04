@@ -312,26 +312,32 @@ Displays images from local or remote sources.
 
 ```kry
 Image {
-    source: "assets/logo.png"
+    src: "assets/logo.png"
     width: 100
     height: 100
     border_radius: 8
 }
 ```
 
+**Image Properties:**
+- `src` - Path to the image file (local or URL)
+- `width`, `height` - Image dimensions in pixels
+- `border_radius` - Rounded corners for the image
+- `opacity` - Image transparency (0.0 to 1.0)
+
 **Image Sizing and Scaling:**
 
 ```kry
 # Fixed size
 Image {
-    source: "assets/icon.png"
+    src: "assets/icon.png"
     width: 32
     height: 32
 }
 
 # Responsive with aspect ratio
 Image {
-    source: "assets/banner.jpg"
+    src: "assets/banner.jpg"
     width: "100%"
     height: 200
     # Image will scale to fit width, height is maximum
@@ -339,7 +345,7 @@ Image {
 
 # Circular avatar
 Image {
-    source: "assets/avatar.jpg"
+    src: "assets/avatar.jpg"
     width: 60
     height: 60
     border_radius: 30
@@ -347,12 +353,22 @@ Image {
 
 # Card image with rounded corners
 Image {
-    source: "assets/card_image.jpg"
+    src: "assets/card_image.jpg"
     width: "100%"
     height: 160
     border_radius: 8
 }
+
+# Image with opacity
+Image {
+    src: "assets/watermark.png"
+    width: 200
+    height: 100
+    opacity: 0.5
+}
 ```
+
+**Note:** Currently, the Raylib renderer displays image placeholders showing the filename. Full image rendering will be implemented in future versions.
 
 ## Interactive Elements
 
