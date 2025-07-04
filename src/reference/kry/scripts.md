@@ -38,12 +38,42 @@ App {
 }
 ```
 
-### Supported Languages
+### Simplified Function Syntax
 
-KRY supports multiple scripting languages:
+For simple event handlers, you can use the simplified `@function` syntax instead of full script blocks:
 
 ```kry
-# Lua scripting
+# Simple function syntax (✅ Currently Implemented)
+@function "lua" handleButtonClick() {
+    print("🎯 Button clicked! Hello from Lua script!")
+    print("This demonstrates Kryon's simplified function syntax.")
+}
+
+# With parameters
+@function "lua" validateInput(value) {
+    if string.len(value) > 0 then
+        print("Input is valid: " .. value)
+        return true
+    else
+        print("Input is empty!")
+        return false
+    end
+}
+
+# Parameterless function
+@function "lua" initializeApp() {
+    print("Application starting...")
+}
+```
+
+This syntax automatically wraps your code in a proper function declaration, making it easier to write simple event handlers and utility functions.
+
+### Supported Languages
+
+KRY currently supports **Lua scripting** with plans for additional languages:
+
+```kry
+# Lua scripting (✅ Currently Implemented)
 @script "lua" {
     function calculateTotal(items)
         local total = 0
@@ -53,8 +83,16 @@ KRY supports multiple scripting languages:
         return total
     end
 }
+```
 
-# JavaScript scripting
+**🚧 Coming Soon (Not Yet Implemented):**
+- JavaScript scripting  
+- Python scripting (runtime-dependent)
+- Wren scripting (lightweight alternative)
+
+Example of planned JavaScript support:
+```kry
+# JavaScript scripting (🚧 Planned)
 @script "javascript" {
     function validateEmail(email) {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,31 +104,6 @@ KRY supports multiple scripting languages:
             style: 'currency',
             currency: 'USD'
         }).format(amount);
-    }
-}
-
-# Python scripting (runtime-dependent)
-@script "python" {
-    import json
-    import datetime
-    
-    def process_data(raw_data):
-        data = json.loads(raw_data)
-        data['processed_at'] = datetime.datetime.now().isoformat()
-        return json.dumps(data)
-}
-
-# Wren scripting (lightweight alternative)
-@script "wren" {
-    class Calculator {
-        static add(a, b) { a + b }
-        static multiply(a, b) { a * b }
-    }
-    
-    var calculate = Fn.new { |operation, a, b|
-        if (operation == "add") return Calculator.add(a, b)
-        if (operation == "multiply") return Calculator.multiply(a, b)
-        return 0
     }
 }
 ```

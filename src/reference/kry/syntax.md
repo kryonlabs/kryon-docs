@@ -7,20 +7,20 @@ The KRY language uses a clean, structured syntax designed for readability and ea
 Every KRY file follows a predictable structure with optional sections:
 
 ```kry
-# 1. File-level directives (optional)
+// 1. File-level directives (optional)
 @include "other_file.kry"
 @variables { /* ... */ }
 
 # 2. Style definitions (optional)
 style "my_style" { /* ... */ }
 
-# 3. Component definitions (optional)
+// 3. Component definitions (optional)
 Define MyComponent { /* ... */ }
 
 # 4. Script blocks (optional)
 @script "lua" { /* ... */ }
 
-# 5. Main UI definition (required for runnable apps)
+// 5. Main UI definition (required for runnable apps)
 App {
     # Application content
 }
@@ -35,23 +35,50 @@ App {
 - Whitespace and indentation are flexible but recommended for readability
 
 ### Comments
-Single-line comments start with `#`:
+Kryon supports two single-line comment styles:
 
+**Hash comments** start with `#`:
 ```kry
-# This is a comment
+# This is a hash-style comment
 App {
     # Comments can be anywhere
     window_title: "My App"  # End-of-line comment
 }
 ```
 
-Block comments are not supported - use multiple single-line comments:
+**Double-slash comments** start with `//`:
+```kry
+// This is a double-slash comment  
+App {
+    // Comments can be anywhere
+    window_title: "My App"  // End-of-line comment
+}
+```
 
+**Mixed usage** - Both styles can be used in the same file:
+```kry
+// Main application configuration
+# UI element definitions
+App {
+    window_title: "Mixed Comments Demo"  # Hash comment
+    window_width: 800                   // Double-slash comment
+}
+```
+
+Block comments are not supported - use multiple single-line comments:
 ```kry
 # This is a multi-line comment
-# that spans several lines
+# that spans several lines  
 # to describe complex functionality
+
+// Alternative multi-line comment
+// using double-slash style
+// for consistency with other languages
 ```
+
+**Note:** The choice between `#` and `//` is purely stylistic. Many developers prefer:
+- `#` for configuration and data-focused sections (following shell/YAML conventions)
+- `//` for logic and behavior descriptions (following C/JavaScript conventions)
 
 ### Identifiers and Keywords
 
@@ -86,7 +113,7 @@ ElementName {
 Elements with only properties (no children) can be written on one line:
 
 ```kry
-# Single-line form
+// Single-line form
 Text { text: "Hello"; font_size: 16; text_color: "#333333FF" }
 
 # Equivalent multi-line form
@@ -145,10 +172,10 @@ Text {
 **Numbers** - Integers and floats:
 ```kry
 Container {
-    width: 200          # Integer (pixels)
-    height: 150         # Integer (pixels)
+    width: 200          // Integer (pixels)
+    height: 150         // Integer (pixels)
     opacity: 0.8        # Float (0.0-1.0)
-    font_size: 16       # Integer (pixels)
+    font_size: 16       // Integer (pixels)
 }
 ```
 
