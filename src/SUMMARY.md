@@ -14,6 +14,7 @@
 - [Elements](./reference/kry/elements.md)
 - [Properties](./reference/kry/properties.md)
 - [Styles](./reference/kry/styles.md)
+- [Scripting & DOM API](./reference/scripting-dom-api.md)
 
 # Renderer Backends
 
