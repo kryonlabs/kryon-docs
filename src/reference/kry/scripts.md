@@ -334,6 +334,118 @@ Container {
 }
 ```
 
+### Template Variable API
+
+Template variables provide reactive data binding with automatic UI updates. Use these functions to interact with template variables:
+
+```kry
+@variables {
+    counter_value: 0
+    user_name: "Guest"
+    status_message: "Ready"
+    is_loading: false
+}
+
+@script "lua" {
+    -- Set template variable (triggers automatic UI update)
+    function updateCounter()
+        local current = getTemplateVariable("counter_value")
+        local value = tonumber(current) or 0
+        setTemplateVariable("counter_value", tostring(value + 1))
+        # UI elements using {{counter_value}} update automatically!
+    end
+    
+    -- Get current template variable value
+    function displayCurrentValues()
+        local counter = getTemplateVariable("counter_value")
+        local name = getTemplateVariable("user_name")
+        local status = getTemplateVariable("status_message")
+        
+        print("Counter: " .. counter)
+        print("User: " .. name)
+        print("Status: " .. status)
+    end
+    
+    -- Get all template variables as a table
+    function debugTemplateVariables()
+        local all_vars = getTemplateVariables()
+        for name, value in pairs(all_vars) do
+            print(name .. " = " .. value)
+        end
+    end
+    
+    -- Update multiple template variables
+    function updateUserSession(name, status)
+        setTemplateVariable("user_name", name)
+        setTemplateVariable("status_message", status)
+        setTemplateVariable("is_loading", "false")
+        # All UI elements using these variables update automatically
+    end
+    
+    -- Template variable-based state management
+    function toggleLoadingState()
+        local loading = getTemplateVariable("is_loading")
+        local newState = (loading == "true") and "false" or "true"
+        setTemplateVariable("is_loading", newState)
+        
+        if newState == "true" then
+            setTemplateVariable("status_message", "Loading...")
+        else
+            setTemplateVariable("status_message", "Ready")
+        end
+    end
+}
+
+App {
+    Container {
+        # Template variables automatically update UI
+        Text { text: "Count: {{counter_value}}" }
+        Text { text: "Hello, {{user_name}}!" }
+        Text { text: "Status: {{status_message}}" }
+        Text { text: "Loading: {{is_loading}}" }
+        
+        Button {
+            text: "Increment"
+            onClick: "updateCounter"
+        }
+        
+        Button {
+            text: "Toggle Loading"
+            onClick: "toggleLoadingState"
+        }
+    }
+}
+```
+
+#### Template Variable API Functions
+
+| Function | Description | Example |
+|----------|-------------|---------|
+| `setTemplateVariable(name, value)` | Set template variable (triggers UI update) | `setTemplateVariable("counter", "42")` |
+| `getTemplateVariable(name)` | Get current template variable value | `local count = getTemplateVariable("counter")` |
+| `getTemplateVariables()` | Get all template variables as table | `local vars = getTemplateVariables()` |
+
+#### Template Variable vs DOM API
+
+**Template Variables** (Recommended for dynamic content):
+```lua
+-- ✅ Reactive and automatic
+function updateDisplay()
+    setTemplateVariable("message", "Hello World")
+    # UI updates automatically wherever {{message}} is used
+end
+```
+
+**DOM API** (For direct element manipulation):
+```lua
+-- ⚠️ Manual and element-specific
+function updateDisplay()
+    local element = getElementById("message_display")
+    element:setText("Hello World")
+    # Must update each element individually
+end
+```
+
 ### State Management
 
 Scripts can manage application state:

@@ -25,6 +25,10 @@ Every KRB file follows a standardized binary structure:
 ├─────────────────────────────────────┤
 │          Variable Table             │ ← Variable definitions and values
 ├─────────────────────────────────────┤
+│       Template Variables            │ ← Template variable definitions
+├─────────────────────────────────────┤
+│       Template Bindings             │ ← Property-to-variable bindings
+├─────────────────────────────────────┤
 │           Style Table               │ ← Style definitions
 ├─────────────────────────────────────┤
 │         Component Table             │ ← Component definitions
@@ -124,7 +128,8 @@ Flags Bitfield:
 - Bit 1: Has Resources  
 - Bit 2: Compressed
 - Bit 3: Debug Info
-- Bits 4-15: Reserved
+- Bit 4: Has Template Variables
+- Bits 5-15: Reserved
 ```
 
 ### Element Tree Section
@@ -173,6 +178,58 @@ Data Types:
 0x01: String Ref   0x02: Integer    0x03: Float
 0x04: Color        0x05: Boolean    0x06: Enum
 0x07: Style Ref    0x08: Variable   0x09: Event
+0x0A: Template Ref 0x0B: Reactive   0x0C: Binding
+```
+
+### Template Variable Section
+
+Defines reactive template variables:
+
+```
+Template Variable Header
+┌─────────────┬─────────────┬─────────────┐
+│Variable Count│  Section    │  Reserved   │
+│  (VarInt)   │   Size      │    (u16)    │
+│             │  (VarInt)   │             │
+└─────────────┴─────────────┴─────────────┘
+
+Template Variable Entry
+┌─────────────┬─────────────┬─────────────┐
+│Name Index   │ Value Type  │Default Value│
+│  (u8)       │    (u8)     │Index (u8)   │
+└─────────────┴─────────────┴─────────────┘
+
+Value Types:
+0x01: String    0x02: Integer   0x03: Float
+0x04: Boolean   0x05: Color     0x06: Array
+```
+
+### Template Binding Section
+
+Connects properties to template variables:
+
+```
+Template Binding Header
+┌─────────────┬─────────────┬─────────────┐
+│Binding Count│  Section    │  Reserved   │
+│  (VarInt)   │   Size      │    (u16)    │
+│             │  (VarInt)   │             │
+└─────────────┴─────────────┴─────────────┘
+
+Template Binding Entry
+┌─────────────┬─────────────┬─────────────┐
+│Element Index│Property ID  │Expression   │
+│   (u16)     │    (u8)     │Index (u8)   │
+├─────────────┼─────────────┼─────────────┤
+│Var Count   │Var Index 1  │Var Index 2  │
+│   (u8)      │   (u8)      │   (u8)      │
+└─────────────┴─────────────┴─────────────┘
+
+Binding Types:
+- Direct: {{variable_name}}
+- Interpolation: "Count: {{counter_value}}"
+- Conditional: {{condition ? value_a : value_b}}
+- Expression: {{counter_value * 2 + 1}}
 ```
 
 ## Optimization Techniques
@@ -238,6 +295,29 @@ Button { background_color: $user_theme ? $light_color : $dark_color }
 
 Compiled KRB:
 Button { background_color: VARIABLE_REF(conditional_expression) }
+```
+
+### Template Variables (Vue-like Reactivity)
+
+Template variables enable reactive data binding:
+
+```
+Source KRY:
+@variables { counter_value: 0 }
+Text { text: "Count: {{counter_value}}" }
+
+Compiled KRB:
+Template Variable Table:
+├── Variable #0: "counter_value" (type: Int, default: 0)
+
+Template Binding Table:
+├── Binding #0: Element[1].text_property → "Count: {{counter_value}}"
+│   └── Dependencies: [Variable #0]
+
+Runtime Behavior:
+- When counter_value changes, automatically updates text property
+- No manual getElementById() or setText() calls required
+- Reactive updates handled by the runtime system
 ```
 
 ## Runtime Loading
@@ -378,6 +458,9 @@ Size Analysis:
 ├── Properties: 523 bytes (41.9%)
 │   ├── Redundant: 78 bytes (14.9%)
 │   └── Default values: 123 bytes (23.5%)
+├── Template Variables: 89 bytes (7.1%)
+│   ├── Variable definitions: 34 bytes
+│   └── Binding expressions: 55 bytes
 ├── Elements: 334 bytes (26.8%)
 │   └── Optimizable: 67 bytes (20.1%)
 └── Scripts: 46 bytes (3.7%)
@@ -386,7 +469,8 @@ Optimization Recommendations:
 - Remove 12 unused strings (-45 bytes)
 - Compress property blocks (-78 bytes)  
 - Use default values (-123 bytes)
-- Total savings: 246 bytes (19.7%)
+- Deduplicate template expressions (-23 bytes)
+- Total savings: 269 bytes (21.6%)
 ```
 
 ## Reference Sections

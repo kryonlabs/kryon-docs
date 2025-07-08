@@ -172,6 +172,224 @@ local app = getRootElement()
 local allChildren = app:getChildren()
 ```
 
+## Template Variable API
+
+Template variables provide Vue-like reactive data binding with automatic UI updates. This is the modern, recommended approach for dynamic content management.
+
+### Template Variable Functions
+
+#### setTemplateVariable(name, value)
+Set a template variable and automatically update all UI elements that use it.
+
+```lua
+-- Set template variable - UI updates automatically
+setTemplateVariable("counter_value", "42")
+setTemplateVariable("user_name", "John Doe")
+setTemplateVariable("status", "Connected")
+
+-- All elements using {{counter_value}}, {{user_name}}, {{status}} 
+-- will update automatically without manual DOM manipulation
+```
+
+#### getTemplateVariable(name)
+Get the current value of a template variable.
+
+```lua
+-- Get current values
+local counter = getTemplateVariable("counter_value")
+local user = getTemplateVariable("user_name")
+local status = getTemplateVariable("status")
+
+print("Counter: " .. counter)
+print("User: " .. user)
+print("Status: " .. status)
+```
+
+#### getTemplateVariables()
+Get all template variables as a table.
+
+```lua
+-- Get all template variables
+local allVars = getTemplateVariables()
+
+-- Iterate through all variables
+for name, value in pairs(allVars) do
+    print(name .. " = " .. value)
+end
+
+-- Access specific variables
+local counter = allVars["counter_value"]
+local user = allVars["user_name"]
+```
+
+### Template Variable Usage
+
+#### Basic Reactive Counter
+```kry
+@variables {
+    counter_value: 0
+}
+
+App {
+    Text {
+        text: "Count: {{counter_value}}"  # Automatic updates
+    }
+    
+    Button {
+        text: "Increment"
+        onClick: "increment"
+    }
+}
+
+@script "lua" {
+    function increment()
+        local current = getTemplateVariable("counter_value")
+        local value = tonumber(current) or 0
+        setTemplateVariable("counter_value", tostring(value + 1))
+        # UI updates automatically!
+    end
+}
+```
+
+#### Multi-Variable Template
+```kry
+@variables {
+    first_name: "John"
+    last_name: "Doe"
+    score: 0
+    level: 1
+}
+
+App {
+    Text { text: "Player: {{first_name}} {{last_name}}" }
+    Text { text: "Level {{level}} - Score: {{score}}" }
+    
+    Button {
+        text: "Update Player"
+        onClick: "updatePlayer"
+    }
+}
+
+@script "lua" {
+    function updatePlayer()
+        setTemplateVariable("first_name", "Jane")
+        setTemplateVariable("last_name", "Smith")
+        setTemplateVariable("score", "1500")
+        setTemplateVariable("level", "3")
+        # All UI elements update automatically
+    end
+}
+```
+
+#### Real-time Status Updates
+```kry
+@variables {
+    connection_status: "Disconnected"
+    last_update: "Never"
+    message_count: "0"
+}
+
+App {
+    Container {
+        Text { text: "Status: {{connection_status}}" }
+        Text { text: "Last Update: {{last_update}}" }
+        Text { text: "Messages: {{message_count}}" }
+        
+        Button {
+            text: "Refresh"
+            onClick: "refreshStatus"
+        }
+    }
+}
+
+@script "lua" {
+    function refreshStatus()
+        setTemplateVariable("connection_status", "Connecting...")
+        
+        # Simulate network call
+        local success = checkConnection()
+        
+        if success then
+            setTemplateVariable("connection_status", "Connected")
+            setTemplateVariable("last_update", os.date("%H:%M:%S"))
+            
+            local count = getTemplateVariable("message_count")
+            local newCount = tonumber(count) + math.random(1, 5)
+            setTemplateVariable("message_count", tostring(newCount))
+        else
+            setTemplateVariable("connection_status", "Failed")
+        end
+    end
+}
+```
+
+### Template Variables vs DOM API
+
+#### Template Variables (Recommended)
+```lua
+-- ✅ Reactive and automatic
+function updateDisplay()
+    setTemplateVariable("message", "Hello World")
+    setTemplateVariable("counter", "42")
+    # UI updates automatically wherever these variables are used
+end
+```
+
+#### DOM API (Manual)
+```lua
+-- ⚠️ Manual and element-specific
+function updateDisplay()
+    local messageElement = getElementById("message_display")
+    local counterElement = getElementById("counter_display")
+    
+    messageElement:setText("Hello World")
+    counterElement:setText("42")
+    # Must update each element individually
+end
+```
+
+### Performance Benefits
+
+Template variables provide several performance advantages:
+
+- **Efficient Updates**: Only elements using changed variables are updated
+- **Batched Operations**: Multiple template variable changes are batched
+- **Minimal DOM Traversal**: No need to search for elements by ID
+- **Automatic Dependency Tracking**: System tracks which elements use which variables
+
+### Best Practices
+
+#### 1. Use Template Variables for Dynamic Content
+```lua
+# Good: Template variables for content that changes
+setTemplateVariable("user_name", "John Doe")
+setTemplateVariable("item_count", "42")
+setTemplateVariable("loading_state", "false")
+```
+
+#### 2. Combine with DOM API for Complex Operations
+```lua
+# Use template variables for content, DOM API for structure
+function updateUserInterface()
+    -- Update content with template variables
+    setTemplateVariable("user_name", "Jane")
+    setTemplateVariable("score", "1500")
+    
+    -- Use DOM API for structural changes
+    local sidebar = getElementById("sidebar")
+    sidebar:setVisible(true)
+end
+```
+
+#### 3. Initialize with Meaningful Defaults
+```kry
+@variables {
+    user_name: "Guest User"      # Clear default
+    loading_message: "Loading..."  # Descriptive default
+    error_count: "0"             # Sensible default
+}
+```
+
 ## Event Handling
 
 ### Built-in Event Handlers
