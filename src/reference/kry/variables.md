@@ -1045,21 +1045,17 @@ App {
     counter_value: 0  # Template variable with default value
 }
 
-# Reactive functions - no manual DOM manipulation needed
+# Reactive functions - variables are directly accessible and reactive
 @function "lua" increment() {
-    local current = getTemplateVariable("counter_value")
-    local value = tonumber(current) or 0
-    setTemplateVariable("counter_value", tostring(value + 1))
+    counter_value = counter_value + 1
 }
 
 @function "lua" decrement() {
-    local current = getTemplateVariable("counter_value")
-    local value = tonumber(current) or 0
-    setTemplateVariable("counter_value", tostring(value - 1))
+    counter_value = counter_value - 1
 }
 
 @function "lua" reset() {
-    setTemplateVariable("counter_value", "0")
+    counter_value = 0
 }
 ```
 

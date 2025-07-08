@@ -349,21 +349,15 @@ Template variables provide reactive data binding with automatic UI updates. Use 
 @script "lua" {
     -- Set template variable (triggers automatic UI update)
     function updateCounter()
-        local current = getTemplateVariable("counter_value")
-        local value = tonumber(current) or 0
-        setTemplateVariable("counter_value", tostring(value + 1))
+        counter_value = counter_value + 1
         # UI elements using {{counter_value}} update automatically!
     end
     
-    -- Get current template variable value
+    -- Access template variables directly
     function displayCurrentValues()
-        local counter = getTemplateVariable("counter_value")
-        local name = getTemplateVariable("user_name")
-        local status = getTemplateVariable("status_message")
-        
-        print("Counter: " .. counter)
-        print("User: " .. name)
-        print("Status: " .. status)
+        print("Counter: " .. counter_value)
+        print("User: " .. user_name)
+        print("Status: " .. status_message)
     end
     
     -- Get all template variables as a table
@@ -376,22 +370,20 @@ Template variables provide reactive data binding with automatic UI updates. Use 
     
     -- Update multiple template variables
     function updateUserSession(name, status)
-        setTemplateVariable("user_name", name)
-        setTemplateVariable("status_message", status)
-        setTemplateVariable("is_loading", "false")
+        user_name = name
+        status_message = status
+        is_loading = false
         # All UI elements using these variables update automatically
     end
     
     -- Template variable-based state management
     function toggleLoadingState()
-        local loading = getTemplateVariable("is_loading")
-        local newState = (loading == "true") and "false" or "true"
-        setTemplateVariable("is_loading", newState)
+        is_loading = not is_loading
         
-        if newState == "true" then
-            setTemplateVariable("status_message", "Loading...")
+        if is_loading then
+            status_message = "Loading..."
         else
-            setTemplateVariable("status_message", "Ready")
+            status_message = "Ready"
         end
     end
 }

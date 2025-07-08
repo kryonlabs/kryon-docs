@@ -15,6 +15,7 @@
 - [Properties](./reference/kry/properties.md)
 - [Styles](./reference/kry/styles.md)
 - [Scripting & DOM API](./reference/scripting-dom-api.md)
+- [Multi-VM Architecture](./reference/multi-vm-architecture.md)
 
 # Renderer Backends
 
