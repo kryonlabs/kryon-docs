@@ -17,6 +17,12 @@
 - [Scripting & DOM API](./reference/scripting-dom-api.md)
 - [Multi-VM Architecture](./reference/multi-vm-architecture.md)
 
+# Specifications
+
+- [KRY Language Specification](./specifications/kry-language-specification.md)
+- [KRB Binary Format Specification](./specifications/krb-binary-format-specification.md)
+- [Implementation & Renderer Guide](./specifications/implementation-renderer-guide.md)
+
 # Renderer Backends
 
 - [Desktop (WGPU)](./runtime/desktop.md)

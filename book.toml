@@ -10,6 +10,7 @@ description = "Build efficient, cross-platform user interfaces"
 
 [output.html]
 additional-css = ["assets/custom.css"]
+additional-js = ["assets/kry.js"]
 git-repository-url = "https://github.com/kryonlabs/kryon-docs"
 edit-url-template = "https://github.com/kryonlabs/kryon-docs/edit/main/src/{path}"
 
