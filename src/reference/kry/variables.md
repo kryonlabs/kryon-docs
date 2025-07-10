@@ -19,6 +19,8 @@ Button {
     background_color: $primary_color
     padding: $default_spacing
     text: $app_title
+    text_font: $body_font
+    font_size: $font_md
 }
 
 App {
@@ -44,6 +46,11 @@ String values for text content, colors, and identifiers:
     app_icon: "assets/icon.png"
     logo_image: "assets/logo.svg"
     
+    # Font families
+    brand_font: "Montserrat"
+    ui_font: "Inter"
+    code_font: "JetBrains Mono"
+    
     # Event handlers
     save_handler: "handleSave"
     cancel_handler: "handleCancel"
@@ -63,6 +70,20 @@ Button {
 
 Image {
     source: $logo_image
+}
+
+Text {
+    text: "Welcome to Kryon"
+    text_font: $brand_font
+    font_size: 24
+    font_weight: bold
+}
+
+Text {
+    text: "const greeting = 'Hello World';"
+    text_font: $code_font
+    font_size: 14
+    font_style: normal
 }
 ```
 
@@ -86,6 +107,16 @@ Integer and floating-point values for dimensions, spacing, and measurements:
     font_lg: 18
     font_xl: 24
     font_xxl: 32
+    
+    # Font families
+    heading_font: "Montserrat"
+    body_font: "Open Sans"
+    mono_font: "Fira Code"
+    
+    # Font styles
+    normal_style: "normal"
+    italic_style: "italic"
+    oblique_style: "oblique"
     
     # Layout dimensions
     sidebar_width: 250
@@ -938,13 +969,13 @@ style "button_legacy" {
 }
 ```
 
-## Template Variables (Reactive)
+## Unified Variable System (Reactive)
 
-Template variables provide Vue-like reactive data binding, allowing variables to be embedded directly in templates with automatic UI updates when values change.
+Kryon uses a unified `$variable` syntax for all variable usage - in styles, templates, and scripts. Variables are reactive by default, automatically updating the UI when values change.
 
-### Template Variable Syntax
+### Unified Variable Syntax
 
-Template variables use double curly braces `{{variable_name}}` and automatically update the UI when changed via scripts:
+All variables use the `$` prefix and are reactive when used in templates:
 
 ```kry
 @variables {
@@ -955,49 +986,40 @@ Template variables use double curly braces `{{variable_name}}` and automatically
 
 App {
     Text {
-        text: "Count: {{counter_value}}"  # Reactive template variable
+        text: "Count: $counter_value"  # Reactive variable in template
     }
     
     Text {
-        text: "Hello, {{user_name}}!"    # Multi-variable support
+        text: "Hello, $user_name!"    # Variables in strings
     }
     
     Text {
-        text: "Status: {{status_message}}"
+        text: "Status: $status_message"
     }
 }
 
 @function "lua" update_counter() {
-    local current = getTemplateVariable("counter_value")
-    local value = tonumber(current) or 0
-    setTemplateVariable("counter_value", tostring(value + 1))
+    counter_value = counter_value + 1
     # UI automatically updates! No manual DOM manipulation needed
 }
 ```
 
-### Template Variable API
+### Variable Access in Scripts
 
-Scripts can interact with template variables using these functions:
+Variables are directly accessible in scripts as reactive values:
 
-#### Setting Template Variables
+#### Direct Variable Access
 ```lua
--- Update a template variable (triggers UI update)
-setTemplateVariable("counter_value", "42")
-setTemplateVariable("user_name", "John Doe")
-setTemplateVariable("status_message", "Processing...")
-```
+-- Variables are available directly in scripts
+counter_value = counter_value + 1
+user_name = "John Doe"
+status_message = "Processing..."
 
-#### Getting Template Variables
-```lua
--- Get current template variable value
-local count = getTemplateVariable("counter_value")
-local name = getTemplateVariable("user_name")
+-- Reading variables
+local count = counter_value
+local name = user_name
 
--- Get all template variables as a table
-local all_vars = getTemplateVariables()
-for name, value in pairs(all_vars) do
-    print(name .. " = " .. value)
-end
+-- All variable updates automatically trigger UI updates
 ```
 
 ### Reactive Counter Example
@@ -1011,9 +1033,9 @@ App {
     Container {
         style: "counter_container"
         
-        # Display uses template variable - updates automatically
+        # Display uses $variable - updates automatically
         Text {
-            text: "Count: {{counter_value}}"
+            text: "Count: $counter_value"
             style: "counter_display"
         }
         
@@ -1042,10 +1064,10 @@ App {
 }
 
 @variables {
-    counter_value: 0  # Template variable with default value
+    counter_value: 0  # Reactive variable with default value
 }
 
-# Reactive functions - variables are directly accessible and reactive
+# Variables are directly accessible and reactive in scripts
 @function "lua" increment() {
     counter_value = counter_value + 1
 }
@@ -1059,16 +1081,16 @@ App {
 }
 ```
 
-### Template vs Traditional Variables
+### Unified Variable Behavior
 
-| Feature | Traditional Variables (`$var`) | Template Variables (`{{var}}`) |
-|---------|-------------------------------|-------------------------------|
-| **Definition** | `@variables { color: "#FF0000" }` | `@variables { counter: 0 }` |
-| **Usage** | `background_color: $color` | `text: "Count: {{counter}}"` |
-| **Compilation** | Resolved at compile time | Embedded as reactive bindings |
-| **Runtime Updates** | Static, cannot change | Dynamic, script-updateable |
-| **UI Updates** | Manual DOM manipulation | Automatic UI updates |
-| **Use Cases** | Styling, configuration | Dynamic content, data binding |
+| Context | Syntax | Behavior |
+|---------|--------|----------|
+| **Styles** | `background_color: $primary_color` | Resolved at compile time |
+| **Templates** | `text: "Count: $counter"` | Reactive, updates automatically |
+| **Scripts** | `counter = counter + 1` | Direct access, triggers UI updates |
+| **Properties** | `padding: $spacing_md` | Static or reactive based on context |
+
+The same `$variable` syntax works everywhere, with the compiler determining whether the variable should be static (for styles) or reactive (for templates).
 
 ### Advanced Template Features
 
@@ -1083,44 +1105,44 @@ App {
 
 App {
     Text {
-        text: "Player: {{first_name}} {{last_name}}"
+        text: "Player: $first_name $last_name"
     }
     
     Text {
-        text: "Level {{level}} - Score: {{score}}"
+        text: "Level $level - Score: $score"
     }
 }
 
 @function "lua" update_player_info() {
-    setTemplateVariable("first_name", "Jane")
-    setTemplateVariable("last_name", "Smith")
-    setTemplateVariable("score", "1500")
-    setTemplateVariable("level", "3")
+    first_name = "Jane"
+    last_name = "Smith"
+    score = 1500
+    level = 3
     # All UI elements update automatically
 }
 ```
 
-#### Template Variable Types
+#### Variable Types
 ```kry
 @variables {
-    # String template variables
+    # String variables
     message: "Welcome"
     user_status: "online"
     
-    # Numeric template variables (stored as strings)
-    count: "0"
-    percentage: "75"
+    # Numeric variables
+    count: 0
+    percentage: 75
     
-    # Boolean-like template variables
-    is_enabled: "true"
-    show_details: "false"
+    # Boolean variables
+    is_enabled: true
+    show_details: false
 }
 
 App {
-    Text { text: "{{message}}" }
-    Text { text: "Count: {{count}}" }
-    Text { text: "Progress: {{percentage}}%" }
-    Text { text: "Enabled: {{is_enabled}}" }
+    Text { text: $message }
+    Text { text: "Count: $count" }
+    Text { text: "Progress: $percentage%" }
+    Text { text: "Enabled: $is_enabled" }
 }
 ```
 
@@ -1129,28 +1151,26 @@ App {
 @variables {
     current_time: "00:00:00"
     connection_status: "Disconnected"
-    notification_count: "0"
+    notification_count: 0
 }
 
 App {
     Container {
-        Text { text: "Time: {{current_time}}" }
-        Text { text: "Status: {{connection_status}}" }
-        Text { text: "Notifications: {{notification_count}}" }
+        Text { text: "Time: $current_time" }
+        Text { text: "Status: $connection_status" }
+        Text { text: "Notifications: $notification_count" }
     }
 }
 
 @function "lua" update_status() {
     -- Update time
-    local time = os.date("%H:%M:%S")
-    setTemplateVariable("current_time", time)
+    current_time = os.date("%H:%M:%S")
     
     -- Update connection status
-    setTemplateVariable("connection_status", "Connected")
+    connection_status = "Connected"
     
     -- Update notification count
-    local count = getTemplateVariable("notification_count")
-    setTemplateVariable("notification_count", tostring(tonumber(count) + 1))
+    notification_count = notification_count + 1
 }
 ```
 
@@ -1175,45 +1195,44 @@ Template variables are optimized for performance:
 }
 ```
 
-**After** (Template variables):
+**After** (Reactive variables):
 ```kry
 @function "lua" update_counter() {
-    local current = getTemplateVariable("counter_value")
-    setTemplateVariable("counter_value", tostring(tonumber(current) + 1))
+    counter_value = counter_value + 1
     # UI updates automatically!
 }
 ```
 
-### Best Practices for Template Variables
+### Best Practices for Reactive Variables
 
-#### 1. Use Template Variables for Dynamic Content
+#### 1. Use Reactive Variables for Dynamic Content
 ```kry
 # Good: Dynamic content that changes at runtime
 @variables {
-    user_score: "0"
+    user_score: 0
     game_status: "Ready"
     player_name: "Player 1"
 }
 
-Text { text: "{{player_name}}: {{user_score}} points" }
-Text { text: "Status: {{game_status}}" }
+Text { text: "$player_name: $user_score points" }
+Text { text: "Status: $game_status" }
 ```
 
-#### 2. Combine with Traditional Variables
+#### 2. Same Syntax, Different Contexts
 ```kry
-# Use traditional variables for static styling
+# Same $variable syntax works everywhere
 @variables {
-    primary_color: "#007BFFFF"     # Traditional - styling
-    button_padding: 12             # Traditional - styling
+    primary_color: "#007BFFFF"     # Used in styles (compile-time)
+    button_padding: 12             # Used in styles (compile-time)
     
-    current_page: "Home"           # Template - dynamic content
-    notification_count: "0"        # Template - dynamic content
+    current_page: "Home"           # Used in templates (reactive)
+    notification_count: 0          # Used in templates (reactive)
 }
 
 Button {
-    background_color: $primary_color    # Static styling
-    padding: $button_padding           # Static styling
-    text: "{{current_page}}"           # Dynamic content
+    background_color: $primary_color    # Resolved at compile time
+    padding: $button_padding           # Resolved at compile time
+    text: $current_page                # Reactive, updates at runtime
 }
 ```
 
@@ -1232,26 +1251,24 @@ Button {
 }
 ```
 
-#### 4. Use Type-Safe String Values
+#### 4. Use Native Types
 ```kry
 @variables {
-    # Good: Always store as strings
-    counter: "0"
-    percentage: "100"
-    is_visible: "true"
-    
-    # Avoid: Mixed types (implementation detail)
-    counter: 0          # Will be converted to string
-    percentage: 100     # Will be converted to string
+    # Use native types directly
+    counter: 0
+    percentage: 100
+    is_visible: true
+    message: "Hello"
 }
 
 @function "lua" update_values() {
-    # Always handle as strings
-    local count = tonumber(getTemplateVariable("counter")) or 0
-    setTemplateVariable("counter", tostring(count + 1))
+    # Direct variable access with native types
+    counter = counter + 1
+    percentage = math.min(100, percentage + 10)
+    is_visible = not is_visible
 }
 ```
 
 ---
 
-Variables are fundamental to creating maintainable, scalable design systems in Kryon. Traditional variables provide compile-time constants for styling and configuration, while template variables enable reactive, Vue-like data binding for dynamic content. By combining both approaches, you can build flexible interfaces that adapt to evolving requirements. Next, explore [Components](components.md) to learn about creating reusable UI components that leverage your variable system.
+Variables are fundamental to creating maintainable, scalable design systems in Kryon. The unified `$variable` syntax works seamlessly across styles, templates, and scripts. Variables used in styles are resolved at compile time for performance, while variables in templates are reactive and automatically update the UI when changed in scripts. This unified approach provides both the performance of static styling and the flexibility of reactive data binding. Next, explore [Components](components.md) to learn about creating reusable UI components that leverage the unified variable system.

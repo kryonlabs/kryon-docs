@@ -265,6 +265,101 @@ Element {
 }
 ```
 
+### Transform Properties
+
+CSS-equivalent transforms for scaling, rotation, and translation:
+
+```kry
+Element {
+    # Object literal syntax for transforms
+    transform: {
+        scale: 1.5                   # Uniform scaling
+        scale_x: 2.0                 # Scale X-axis only
+        scale_y: 0.5                 # Scale Y-axis only
+        rotate: 45deg                # Rotation (supports deg, rad, turn)
+        translate_x: 10px            # X-axis translation
+        translate_y: 20px            # Y-axis translation
+    }
+}
+```
+
+**Transform Examples:**
+
+```kry
+# Simple scaling
+Container {
+    width: 100
+    height: 100
+    background_color: "#FF0000FF"
+    transform: {
+        scale: 1.2                   # 20% larger
+    }
+}
+
+# Rotation with different units
+Container {
+    width: 100
+    height: 100
+    background_color: "#00FF00FF"
+    transform: {
+        rotate: 90deg               # Quarter turn clockwise
+        # Alternative units:
+        # rotate: 1.57rad           # ~90 degrees in radians
+        # rotate: 0.25turn          # Quarter turn
+    }
+}
+
+# Translation (movement)
+Container {
+    pos_x: 100
+    pos_y: 100
+    width: 50
+    height: 50
+    background_color: "#0000FFFF"
+    transform: {
+        translate_x: 25             # Move 25px right
+        translate_y: -10            # Move 10px up
+    }
+}
+
+# Combined transforms
+Container {
+    width: 80
+    height: 80
+    background_color: "#FFFF00FF"
+    transform: {
+        scale: 1.1                  # Slightly larger
+        rotate: 30deg               # Rotate 30 degrees
+        translate_x: 15             # Move right
+        translate_y: 5              # Move down
+    }
+}
+
+# Non-uniform scaling
+Container {
+    width: 100
+    height: 50
+    background_color: "#FF00FFFF"
+    transform: {
+        scale_x: 0.8                # Narrower
+        scale_y: 1.5                # Taller
+    }
+}
+```
+
+**Supported CSS Units:**
+- **Length**: `px`, `em`, `rem`, `vw`, `vh`, `%`
+- **Angle**: `deg`, `rad`, `turn`
+- **Number**: Unitless values (treated as pixels for translation, scalar for scale)
+
+**Transform Order:**
+Transforms are applied in the order: scale → rotate → translate, with rotation and scaling applied around the element's center point.
+
+**Backend Support:**
+- **WGPU**: Full transform support with GPU acceleration
+- **Raylib**: Complete transform support with matrix transformations
+- **Ratatui**: Basic support (translation and scaling only, no rotation)
+
 ## Text Properties
 
 ### Typography
@@ -273,6 +368,10 @@ Element {
 Text {
     # Content
     text: "Sample Text"
+    
+    # Font family and style
+    text_font: "Open Sans"           # Font family name
+    font_style: normal               # normal, italic, oblique
     
     # Size and weight
     font_size: 16                    # Size in pixels
@@ -296,6 +395,7 @@ Text {
 # Large heading
 Text {
     text: "Main Title"
+    text_font: "Montserrat"
     font_size: 32
     font_weight: bold
     text_color: "#1A1A1AFF"
@@ -305,6 +405,7 @@ Text {
 # Subheading
 Text {
     text: "Section Header"
+    text_font: "Montserrat"
     font_size: 20
     font_weight: bold
     text_color: "#333333FF"
@@ -314,6 +415,7 @@ Text {
 # Body text
 Text {
     text: "Regular paragraph text with normal formatting."
+    text_font: "Open Sans"
     font_size: 16
     font_weight: normal
     text_color: "#666666FF"
@@ -323,9 +425,19 @@ Text {
 # Caption
 Text {
     text: "Small helper text"
+    text_font: "Open Sans"
     font_size: 12
     font_weight: light
     text_color: "#999999FF"
+}
+
+# Monospace code
+Text {
+    text: "const result = calculate();"
+    text_font: "Fira Code"
+    font_style: normal
+    font_size: 14
+    text_color: "#2D2D2DFF"
 }
 ```
 
@@ -495,6 +607,153 @@ Container {
         # background_color: "#28A745FF" (inline)
         # text_color: "#FFFFFFFF" (from style)
         # padding: 12 (from style)
+    }
+}
+```
+
+## Property Aliases
+
+### Smart Alias Resolution
+
+The Kryon compiler includes smart property alias resolution to make the language more intuitive. Common shorthand properties are automatically mapped to their canonical names:
+
+```kry
+Text {
+    text: "Hello World"
+    color: "#FF0000FF"          # Automatically becomes 'text_color'
+    font: "Arial"               # Automatically becomes 'text_font'
+    size: 16                    # Automatically becomes 'font_size'
+    align: center               # Automatically becomes 'text_alignment'
+    style: italic               # Automatically becomes 'font_style'
+}
+
+Container {
+    x: 50                       # Automatically becomes 'pos_x'
+    y: 100                      # Automatically becomes 'pos_y'
+    w: 200                      # Automatically becomes 'width'
+    h: 150                      # Automatically becomes 'height'
+    bg: "#0088FFFF"            # Automatically becomes 'background_color'
+    border: 2                   # Automatically becomes 'border_width'
+}
+
+Image {
+    src: "photo.jpg"            # Automatically becomes 'source'
+    url: "image.png"            # Automatically becomes 'source'
+    x: 10                       # Automatically becomes 'pos_x'
+    y: 20                       # Automatically becomes 'pos_y'
+}
+
+App {
+    title: "My App"             # Automatically becomes 'window_title'
+    w: 800                      # Automatically becomes 'window_width'
+    h: 600                      # Automatically becomes 'window_height'
+}
+```
+
+### Supported Aliases
+
+#### Text and Button Elements
+- `color` → `text_color`
+- `font` → `text_font`
+- `size` → `font_size`
+- `align` → `text_alignment`
+- `style` → `font_style` (when used in Text context)
+
+#### Container Elements
+- `x` → `pos_x`
+- `y` → `pos_y`
+- `bg` → `background_color`
+- `bg_color` → `background_color`
+- `border` → `border_width`
+
+#### Image Elements
+- `src` → `source`
+- `url` → `source`
+- `x` → `pos_x`
+- `y` → `pos_y`
+
+#### App Elements
+- `title` → `window_title`
+- `w` → `window_width`
+- `h` → `window_height`
+
+#### Universal Aliases (All Elements)
+- `x` → `pos_x`
+- `y` → `pos_y`
+- `w` → `width`
+- `h` → `height`
+- `bg` → `background_color`
+- `bg_color` → `background_color`
+- `visible` → `visibility`
+
+### Compiler Warnings
+
+When aliases are used, the compiler shows helpful warnings:
+
+```bash
+$ kryc example.kry example.krb
+warning: Line 14: Property 'color' on Text element is automatically mapped to 'text_color' (consider updating your code)
+Compilation successful!
+```
+
+These warnings help you:
+- Understand which properties are being resolved
+- Gradually migrate to canonical property names
+- Maintain consistency across your codebase
+
+### Best Practices
+
+**During Development:**
+Use aliases freely for rapid prototyping:
+```kry
+Container {
+    x: 50
+    y: 100
+    w: 200
+    h: 150
+    bg: "#F0F0F0FF"
+    
+    Text {
+        text: "Quick prototype"
+        color: "#333333FF"
+        size: 16
+    }
+}
+```
+
+**For Production:**
+Consider using canonical names for clarity:
+```kry
+Container {
+    pos_x: 50
+    pos_y: 100
+    width: 200
+    height: 150
+    background_color: "#F0F0F0FF"
+    
+    Text {
+        text: "Production ready"
+        text_color: "#333333FF"
+        font_size: 16
+    }
+}
+```
+
+**Mixed Approach:**
+Use aliases for common properties, canonical names for complex ones:
+```kry
+Container {
+    x: 50                       # Common alias
+    y: 100                      # Common alias
+    width: 200                  # Canonical for clarity
+    height: 150                 # Canonical for clarity
+    background_color: "#F0F0F0FF"  # Canonical for precision
+    
+    Text {
+        text: "Mixed approach"
+        color: "#333333FF"          # Alias for simplicity
+        font_size: 16               # Canonical for clarity
+        text_alignment: center      # Canonical for precision
     }
 }
 ```
