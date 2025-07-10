@@ -93,6 +93,16 @@ Or explore the documentation:
 - **[Language Reference](reference/kry/syntax.md)** - Complete syntax guide
 - **[Examples](examples/calculator.md)** - Working projects
 
+## Complete Specifications
+
+For developers and AI systems, we provide comprehensive technical specifications:
+
+- **[📖 KRY Language Specification](specifications/kry-language-specification.md)** - Complete language reference with syntax, elements, properties, styles, components, variables, and scripting
+- **[🔧 KRB Binary Format Specification](specifications/krb-binary-format-specification.md)** - Detailed binary format documentation with file structure, encoding, and implementation details
+- **[⚙️ Implementation & Renderer Guide](specifications/implementation-renderer-guide.md)** - Step-by-step guide for building KRB parsers and renderers with complete code examples
+
+These specifications are designed to be AI-friendly and provide all necessary information for understanding, implementing, and working with the Kryon framework.
+
 ## License
 
 Kryon is licensed under [0BSD](https://opensource.org/licenses/0BSD) - public domain equivalent.
