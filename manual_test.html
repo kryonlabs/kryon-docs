@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manual KRY Syntax Test</title>
+    <style>
+        .debug-info {
+            background: #f0f0f0;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+        }
+        
+        /* Include our custom CSS styles */
+        .hljs-variable { color: #e6db74 !important; font-weight: bold; }
+        .hljs-meta { color: #f92672 !important; font-weight: bold; }
+        .hljs-type { color: #66d9ef !important; font-weight: bold; }
+        .hljs-built_in { color: #66d9ef !important; font-weight: bold; }
+        .hljs-class .hljs-title { color: #a6e22e !important; font-weight: bold; }
+        .hljs-attr { color: #a6e22e !important; }
+        .hljs-string { color: #e6db74 !important; }
+        .hljs-number { color: #ae81ff !important; }
+        .hljs-comment { color: #75715e !important; font-style: italic; }
+        .hljs-keyword { color: #f92672 !important; font-weight: bold; }
+        
+        pre code.language-kry {
+            background: #272822 !important;
+            color: #f8f8f2 !important;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            display: block;
+        }
+    </style>
+    
+    <!-- Use CDN highlight.js like mdBook might -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+</head>
+<body>
+    <h1>Manual KRY Syntax Highlighting Test</h1>
+    
+    <div class="debug-info" id="debug-1">
+        <strong>Before KRY Registration:</strong>
+        <div id="before-status">Checking...</div>
+    </div>
+    
+    <h2>KRY Code Sample:</h2>
+    <pre><code class="language-kry">App {
+    window_title: "Hello Kryon"
+    window_width: 400
+    window_height: 300
+    
+    Container {
+        layout: column center
+        padding: 20
+        
+        Text {
+            text: "Welcome to Kryon!"
+            font_size: 24
+        }
+        
+        Button {
+            text: "Click Me"
+            background_color: "#007BFFFF"
+            text_color: "#FFFFFFFF"
+            padding: 12
+            border_radius: 6
+        }
+    }
+}</code></pre>
+
+    <div class="debug-info" id="debug-2">
+        <strong>After KRY Registration:</strong>
+        <div id="after-status">Checking...</div>
+    </div>
+
+    <h2>Test Results:</h2>
+    <div id="test-results"></div>
+
+    <script>
+        // Initial status check
+        document.getElementById('before-status').innerHTML = 
+            'hljs available: ' + (typeof hljs !== 'undefined') + '<br>' +
+            'KRY language: ' + (typeof hljs !== 'undefined' && hljs.getLanguage('kry') ? 'YES' : 'NO');
+
+        // Manual KRY language definition (simplified)
+        if (typeof hljs !== 'undefined') {
+            hljs.registerLanguage('kry', function(hljs) {
+                return {
+                    name: 'KRY',
+                    aliases: ['kry'],
+                    keywords: {
+                        keyword: 'Define Properties style',
+                        built_in: 'App Container Text Button Input Image',
+                        literal: 'true false'
+                    },
+                    contains: [
+                        hljs.COMMENT('#', '$'),
+                        hljs.QUOTE_STRING_MODE,
+                        {
+                            className: 'variable',
+                            begin: '\\$\\w+'
+                        },
+                        {
+                            className: 'number',
+                            begin: '\\b\\d+(?:\\.\\d+)?(?:px|em|rem|%)?\\b'
+                        },
+                        {
+                            className: 'number',
+                            begin: '#[0-9a-fA-F]{3,8}\\b'
+                        },
+                        {
+                            className: 'attr',
+                            begin: '^\\s*\\w+\\s*:',
+                            end: ':',
+                            excludeEnd: true
+                        }
+                    ]
+                };
+            });
+
+            // Status after registration
+            document.getElementById('after-status').innerHTML = 
+                'hljs available: ' + (typeof hljs !== 'undefined') + '<br>' +
+                'KRY language: ' + (hljs.getLanguage('kry') ? 'YES' : 'NO') + '<br>' +
+                'Available languages: ' + hljs.listLanguages().slice(0, 10).join(', ') + '...';
+
+            // Try highlighting
+            setTimeout(function() {
+                const kryBlock = document.querySelector('pre code.language-kry');
+                if (kryBlock) {
+                    try {
+                        hljs.highlightElement(kryBlock);
+                        document.getElementById('test-results').innerHTML = 
+                            '<span style="color: green;">✓ Highlighting attempted successfully</span><br>' +
+                            'Block now has classes: ' + kryBlock.className + '<br>' +
+                            'Block innerHTML length: ' + kryBlock.innerHTML.length;
+                    } catch (e) {
+                        document.getElementById('test-results').innerHTML = 
+                            '<span style="color: red;">✗ Error during highlighting: ' + e.message + '</span>';
+                    }
+                } else {
+                    document.getElementById('test-results').innerHTML = 
+                        '<span style="color: orange;">? No KRY block found</span>';
+                }
+            }, 100);
+        }
+    </script>
+</body>
+</html>

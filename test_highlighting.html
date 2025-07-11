@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KRY Syntax Highlighting Test</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="assets/kry.js"></script>
+</head>
+<body>
+    <h1>KRY Syntax Highlighting Test</h1>
+    
+    <h2>Basic KRY Code</h2>
+    <pre><code class="language-kry">@variables {
+    primary_color: "#007BFFFF"
+    app_title: "My App"
+    counter: 0
+}
+
+App {
+    window_title: $app_title
+    window_width: 800
+    window_height: 600
+    
+    Container {
+        display: flex
+        flex_direction: column
+        padding: 20px
+        
+        Text {
+            text: "Welcome to Kryon!"
+            font_size: 24px
+            color: $primary_color
+        }
+        
+        Button {
+            text: "Click Me"
+            onClick: handleClick
+            
+            style "primary_button" {
+                background_color: $primary_color
+                text_color: "#FFFFFF"
+                border_radius: 8px
+                
+                &:hover {
+                    background_color: "#0056B3"
+                }
+            }
+        }
+    }
+}
+
+Define UserCard {
+    Properties {
+        name: String = "User"
+        online: Bool = false
+    }
+    
+    Container {
+        Text {
+            text: $name
+        }
+    }
+}
+
+@script "lua" {
+    function handleClick()
+        print("Button clicked!")
+    end
+}</code></pre>
+
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -7,4 +7,67 @@
     border-left: 3px solid var(--primary-color);
     padding-left: 1rem;
   }
+
+  /* KRY Syntax Highlighting Styles */
+  .hljs-variable {
+    color: #e6db74 !important; /* Yellow for variables like $primary_color */
+    font-weight: bold;
+  }
+  
+  .hljs-meta {
+    color: #f92672 !important; /* Pink for directives like @variables */
+    font-weight: bold;
+  }
+  
+  .hljs-type {
+    color: #66d9ef !important; /* Blue for UI elements like App, Container */
+    font-weight: bold;
+  }
+  
+  .hljs-class .hljs-title {
+    color: #a6e22e !important; /* Green for component names */
+    font-weight: bold;
+  }
+  
+  .hljs-selector-class {
+    color: #fd971f !important; /* Orange for style definitions */
+  }
+  
+  .hljs-selector-pseudo {
+    color: #ae81ff !important; /* Purple for pseudo-selectors like :hover */
+  }
+  
+  .hljs-attr {
+    color: #a6e22e !important; /* Green for properties */
+  }
+  
+  .hljs-string {
+    color: #e6db74 !important; /* Yellow for strings */
+  }
+  
+  .hljs-number {
+    color: #ae81ff !important; /* Purple for numbers */
+  }
+  
+  .hljs-comment {
+    color: #75715e !important; /* Gray for comments */
+    font-style: italic;
+  }
+  
+  .hljs-keyword {
+    color: #f92672 !important; /* Pink for keywords */
+    font-weight: bold;
+  }
+  
+  .hljs-punctuation {
+    color: #f8f8f2 !important; /* White for punctuation */
+  }
+
+  /* Make KRY code blocks more distinctive */
+  pre code.language-kry {
+    background: #272822 !important; /* Dark background */
+    color: #f8f8f2 !important; /* Light text */
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+  }
   

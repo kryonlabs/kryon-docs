@@ -14,6 +14,9 @@ additional-js = ["assets/kry.js"]
 git-repository-url = "https://github.com/kryonlabs/kryon-docs"
 edit-url-template = "https://github.com/kryonlabs/kryon-docs/edit/main/src/{path}"
 
+[output.html.code]
+extra-languages = ["kry"]
+
 [output.html.search]
 enable = true
 

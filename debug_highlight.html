@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug KRY Highlighting</title>
+    <!-- Use same highlight.js as mdBook -->
+    <link rel="stylesheet" href="book/highlight.css">
+    <script src="book/highlight.js"></script>
+</head>
+<body>
+    <h1>Debug KRY Highlighting Test</h1>
+    
+    <h2>Before KRY registration:</h2>
+    <div id="before-status">Checking...</div>
+    
+    <h2>KRY Code Block:</h2>
+    <pre><code class="language-kry">@variables {
+    primary_color: "#007BFFFF"
+    app_title: "Debug Test"
+}
+
+App {
+    window_title: $app_title
+    window_width: 800
+    
+    Container {
+        padding: 20px
+        
+        Text {
+            text: "Hello World"
+            color: $primary_color
+        }
+        
+        Button {
+            text: "Click Me"
+            onClick: handleClick
+            
+            style "debug_button" {
+                background_color: $primary_color
+                
+                &:hover {
+                    background_color: "#0056B3"
+                }
+            }
+        }
+    }
+}
+
+Define TestComponent {
+    Properties {
+        name: String = "Test"
+    }
+    
+    Text {
+        text: $name
+    }
+}</code></pre>
+
+    <h2>After KRY registration:</h2>
+    <div id="after-status">Checking...</div>
+
+    <!-- Load our KRY script -->
+    <script src="assets/kry.js"></script>
+    
+    <script>
+        document.getElementById('before-status').textContent = 
+            'KRY language available: ' + (typeof hljs !== 'undefined' && hljs.getLanguage('kry') ? 'YES' : 'NO');
+        
+        setTimeout(function() {
+            document.getElementById('after-status').textContent = 
+                'KRY language available: ' + (typeof hljs !== 'undefined' && hljs.getLanguage('kry') ? 'YES' : 'NO');
+            
+            // Try highlighting the block
+            const kryBlock = document.querySelector('code.language-kry');
+            if (kryBlock && hljs.getLanguage('kry')) {
+                hljs.highlightElement(kryBlock);
+                console.log('Manually highlighted KRY block');
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
